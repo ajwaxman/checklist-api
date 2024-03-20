@@ -57,6 +57,13 @@ export const all = async (req, res, next) => {
         orderBy: {
           [orderBy]: direction,
         },
+        include: {
+          _count: {
+            select: {
+              todos: true,
+            },
+          },
+        },
       }),
       prisma.group.count(),
     ]);

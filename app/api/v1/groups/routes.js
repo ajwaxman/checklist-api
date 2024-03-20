@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import * as controller from './controller.js';
+import { router as todosRouter } from './../todos/routes.js';
 
 // eslint-disable-next-line new-cap
 export const router = Router();
@@ -22,3 +23,5 @@ router
   .get(controller.read)
   .put(controller.update)
   .delete(controller.remove);
+
+router.use('/:groupId/users', todosRouter);

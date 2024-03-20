@@ -48,6 +48,7 @@ export const all = async (req, res, next) => {
   const { query = {} } = req;
   const { limit, offset } = parsePaginationParams(query);
   const { orderBy, direction } = parseSortParams(fields, ...query);
+  const { groupId } = params;
 
   try {
     const [data, total] = await Promise.all([
@@ -57,8 +58,22 @@ export const all = async (req, res, next) => {
         orderBy: {
           [orderBy]: direction,
         },
+        include: {
+          user: {
+            select: {
+              name: true,
+            },
+          },
+        },
+        where: {
+          groupId,
+        },
       }),
-      prisma.todo.count(),
+      prisma.todo.count({
+        where: {
+          groupId,
+        },
+      }),
     ]);
 
     res.json({
