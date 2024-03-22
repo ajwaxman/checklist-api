@@ -29,12 +29,17 @@ export const id = async (req, res, next) => {
 
 export const create = async (req, res, next) => {
   const { body = {} } = req;
-  res.json({
-    data: body,
-  });
+  const { locals = {} } = res;
+  const { decoded = {} } = locals;
+  const { id: userId } = decoded;
 
   try {
-    const data = await prisma.group.create({ data: body });
+    const data = await prisma.group.create({
+      data: {
+        ...body,
+        userId,
+      },
+    });
 
     res.json({
       data,
