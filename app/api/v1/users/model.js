@@ -1,4 +1,4 @@
-import { compare } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 
 export const fields = [
   'id',
