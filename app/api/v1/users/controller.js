@@ -1,6 +1,11 @@
 import { prisma } from '../../../database.js';
 import { parsePaginationParams, parseSortParams } from '../../../utils.js';
-import { fields, encryptPassword, verifyPassword } from './model.js';
+import {
+  fields,
+  encryptPassword,
+  verifyPassword,
+  UserSchema,
+} from './model.js';
 import { signToken } from '../auth.js';
 
 export const id = async (req, res, next) => {
@@ -30,14 +35,26 @@ export const id = async (req, res, next) => {
 
 export const signin = async (req, res, next) => {
   const { body = {} } = req;
-  const { email, password } = body;
 
   try {
+    const { success, error, data } = await UserSchema.safeParseAsync(body);
+
+    if (!success) {
+      return next({
+        status: 400,
+        message: 'Validation error',
+        error,
+      });
+    }
+
+    const { email, password } = data;
+
     const user = await prisma.user.findUnique({
       where: {
         email,
       },
       select: {
+        id: true,
         name: true,
         email: true,
         password: true,
@@ -81,10 +98,19 @@ export const signup = async (req, res, next) => {
   const { body = {} } = req;
 
   try {
+    const { success, error, data } = await UserSchema.safeParseAsync(body);
+    if (!success) {
+      return next({
+        status: 400,
+        message: 'Validation error',
+        error,
+      });
+    }
+
     const password = await encryptPassword(body.password);
-    const data = await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
-        ...body,
+        ...data,
         password,
       },
       select: {
@@ -94,7 +120,7 @@ export const signup = async (req, res, next) => {
     });
 
     res.json({
-      data,
+      data: user,
     });
   } catch (error) {
     next(error);
@@ -146,18 +172,28 @@ export const update = async (req, res, next) => {
   const { id = '' } = params;
 
   try {
-    const data = await prisma.user.update({
+    const { success, error, data } = await UserSchema.safeParseAsync(body);
+
+    if (!success) {
+      return next({
+        status: 400,
+        message: 'Validation error',
+        error,
+      });
+    }
+
+    const user = await prisma.user.update({
       where: {
         id,
       },
       data: {
-        ...body,
+        ...data,
         updatedAt: new Date(),
       },
     });
 
     res.json({
-      data,
+      data: user,
     });
   } catch (error) {
     next(error);

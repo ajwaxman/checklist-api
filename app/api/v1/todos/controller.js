@@ -1,6 +1,6 @@
 import { prisma } from '../../../database.js';
 import { parsePaginationParams, parseSortParams } from '../../../utils.js';
-import { fields } from './model.js';
+import { TodoSchema, fields } from './model.js';
 
 export const id = async (req, res, next) => {
   const { params = {} } = req;
@@ -34,15 +34,25 @@ export const create = async (req, res, next) => {
   const { id: userId } = decoded;
 
   try {
-    const data = await prisma.todo.create({
+    const { success, error, data } = await TodoSchema.safeParseAsync(body);
+
+    if (!success) {
+      return next({
+        status: 400,
+        message: 'Validation error',
+        error,
+      });
+    }
+
+    const todo = await prisma.todo.create({
       data: {
-        ...body,
+        ...data,
         userId,
       },
     });
 
     res.json({
-      data,
+      data: todo,
     });
   } catch (error) {
     next(error);
