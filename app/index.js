@@ -1,5 +1,7 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import cors from 'cors';
+import helmet from 'helmet';
 
 import { router as api } from './api/v1/index.js';
 import { logger, HTTPlogger } from './logger.js';
@@ -23,6 +25,16 @@ app.use('/api', api);
 
 // Log HTTP Requests
 app.use(HTTPlogger);
+
+// CORS
+app.use(
+  cors({
+    origin: process.env.ORIGIN,
+  })
+);
+
+// Helmet
+app.use(helmet());
 
 // No route found handler
 app.use((req, res, next) => {
