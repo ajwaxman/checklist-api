@@ -60,9 +60,9 @@ export const create = async (req, res, next) => {
 };
 
 export const all = async (req, res, next) => {
-  const { query = {} } = req;
+  const { query = {}, params = {} } = req;
   const { limit, offset } = parsePaginationParams(query);
-  const { orderBy, direction } = parseSortParams(fields, ...query);
+  const { orderBy, direction } = parseSortParams({ fields, ...query });
   const { groupId } = params;
 
   try {

@@ -5,6 +5,7 @@ import {
   encryptPassword,
   verifyPassword,
   UserSchema,
+  LoginSchema,
 } from './model.js';
 import { signToken } from '../auth.js';
 
@@ -37,7 +38,7 @@ export const signin = async (req, res, next) => {
   const { body = {} } = req;
 
   try {
-    const { success, error, data } = await UserSchema.safeParseAsync(body);
+    const { success, error, data } = await LoginSchema.safeParseAsync(body);
 
     if (!success) {
       return next({

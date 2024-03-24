@@ -7,7 +7,7 @@ export const TodoSchema = z
       .string()
       .trim()
       .refine(
-        (value) => validator.isAlphanumeric(validator.blacklist(value, '')),
+        (value) => validator.isAlphanumeric(validator.blacklist(value, ' ')),
         {
           message: 'title must contain only letters, numbers, and spaces',
         }

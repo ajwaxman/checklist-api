@@ -7,7 +7,7 @@ const { token } = configuration;
 const { secret, expires } = token;
 
 const limiter = new RateLimiterMemory({
-  points: 5,
+  points: 20,
   duration: 1,
 });
 
@@ -81,9 +81,10 @@ export const owner = (req, res, next) => {
 
 export const limit = async (req, res, next) => {
   try {
-    await limiter.consumer(req.ip, 1);
+    await limiter.consume(req.ip, 1);
     next();
   } catch (error) {
+    console.log(error);
     next({
       status: 429,
       message: 'Too many requests',

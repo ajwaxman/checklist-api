@@ -17,6 +17,6 @@ export const configuration = {
   },
   token: {
     secret: process.env.TOKEN_SECRET,
-    expires: process.env.TOKEN_EXPIRATION,
+    expires: process.env.TOKEN_EXPIRES,
   },
 };
