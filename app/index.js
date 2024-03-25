@@ -2,8 +2,10 @@ import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import cors from 'cors';
 import helmet from 'helmet';
+import swaggerUI from 'swagger-ui-express';
 
 import { router as api } from './api/v1/index.js';
+import { swaggerDefinition } from './api/v1/docs.js';
 import { logger, HTTPlogger } from './logger.js';
 
 export const app = express();
@@ -35,6 +37,9 @@ app.use(
 
 // Helmet
 app.use(helmet());
+
+// Docs
+app.use('/api/v1/docs', swaggerUI.serve, swaggerUI.setup(swaggerDefinition));
 
 // No route found handler
 app.use((req, res, next) => {
